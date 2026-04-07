@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useAuth } from './hooks/useAuth'
 import { useData } from './hooks/useData'
+import AuthScreen from './components/AuthScreen'
 import Header from './components/Header'
 import Toolbar from './components/Toolbar'
 import StatsGrid from './components/StatsGrid'
@@ -21,11 +23,7 @@ function AddGroupRow({ onCreate }) {
     return (
       <div
         className="flex items-center gap-3 px-5 py-4 rounded-2xl"
-        style={{
-          background: '#FEF4F8',
-          border: '1.5px solid #F2BED1',
-          boxShadow: '0 4px 20px rgba(192,96,144,0.12)',
-        }}
+        style={{ background: '#FEF4F8', border: '1.5px solid #F2BED1', boxShadow: '0 4px 20px rgba(192,96,144,0.12)' }}
       >
         <input
           autoFocus
@@ -36,18 +34,10 @@ function AddGroupRow({ onCreate }) {
           className="flex-1 text-sm outline-none"
           style={{ color: '#2D1B24', background: 'transparent', fontFamily: 'inherit', fontWeight: 600 }}
         />
-        <button
-          onClick={submit}
-          className="px-4 py-1.5 text-xs rounded-xl"
-          style={{ background: '#7A2848', color: '#fff', fontWeight: 700 }}
-        >
+        <button onClick={submit} className="px-4 py-1.5 text-xs rounded-xl" style={{ background: '#7A2848', color: '#fff', fontWeight: 700 }}>
           Crear
         </button>
-        <button
-          onClick={() => setAdding(false)}
-          className="text-xs"
-          style={{ color: '#C4A4B0', fontWeight: 600 }}
-        >
+        <button onClick={() => setAdding(false)} className="text-xs" style={{ color: '#C4A4B0', fontWeight: 600 }}>
           Cancelar
         </button>
       </div>
@@ -69,26 +59,41 @@ function AddGroupRow({ onCreate }) {
 }
 
 export default function App() {
+  const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()
+
   const {
-    groups, loading,
+    groups, loading: dataLoading,
     createGroup, renameGroup, deleteGroup,
     createTopic, renameTopic, deleteTopic,
     toggleRound, saveNotes, importData,
     getGlobalStats, getGroupStats, getFocusSuggestions,
-  } = useData()
+  } = useData(user?.id)
 
-  const [filter, setFilter]           = useState('all')
+  const [filter, setFilter]         = useState('all')
   const [groupFilter, setGroupFilter] = useState('')
-  const [focusMode, setFocusMode]     = useState(false)
-  const [notesTopic, setNotesTopic]   = useState(null)
-  const [showImport, setShowImport]   = useState(false)
+  const [focusMode, setFocusMode]   = useState(false)
+  const [notesTopic, setNotesTopic] = useState(null)
+  const [showImport, setShowImport] = useState(false)
 
-  if (loading) {
+  // Auth loading
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#F9F5F6' }}>
-        <p style={{ color: '#D4B8C0', fontWeight: 700, fontSize: 14 }} className="animate-pulse">
-          Cargando…
-        </p>
+        <p style={{ color: '#D4B8C0', fontWeight: 700, fontSize: 14 }} className="animate-pulse">Cargando…</p>
+      </div>
+    )
+  }
+
+  // Not logged in
+  if (!user) {
+    return <AuthScreen onSignIn={signIn} onSignUp={signUp} />
+  }
+
+  // Data loading
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F9F5F6' }}>
+        <p style={{ color: '#D4B8C0', fontWeight: 700, fontSize: 14 }} className="animate-pulse">Cargando tus temas…</p>
       </div>
     )
   }
@@ -101,7 +106,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #F8E8EE 0%, #F9F5F6 40%)' }}>
-      <Header stats={stats} />
+      <Header
+        stats={stats}
+        userEmail={user.email}
+        onSignOut={signOut}
+      />
       <Toolbar
         filter={filter}
         onFilter={setFilter}
@@ -158,17 +167,10 @@ export default function App() {
         {!groupFilter && <AddGroupRow onCreate={createGroup} />}
       </main>
 
-      <NotesModal
-        topic={notesTopic}
-        onSave={saveNotes}
-        onClose={() => setNotesTopic(null)}
-      />
+      <NotesModal topic={notesTopic} onSave={saveNotes} onClose={() => setNotesTopic(null)} />
 
       {showImport && (
-        <ImportModal
-          onImport={importData}
-          onClose={() => setShowImport(false)}
-        />
+        <ImportModal onImport={importData} onClose={() => setShowImport(false)} />
       )}
     </div>
   )

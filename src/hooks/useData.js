@@ -4,7 +4,7 @@ import { supabase } from '../supabaseClient'
 
 export const MAX_ROUNDS = 4
 
-export function useData() {
+export function useData(userId) {
   const [groups, setGroups] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -21,21 +21,21 @@ export function useData() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { fetchAll() }, [fetchAll])
+  useEffect(() => { if (userId) fetchAll() }, [fetchAll, userId])
 
   // ── Create group ───────────────────────────────────────────────────────────
   const createGroup = useCallback(async (name) => {
     const position = groups.length
     const { data, error } = await supabase
       .from('groups')
-      .insert({ name: name.trim(), position })
+      .insert({ name: name.trim(), position, user_id: userId })
       .select('*, topics(*)')
       .single()
 
     if (error) { toast.error('Error creando bloque'); return }
     setGroups(prev => [...prev, data])
     toast.success('Bloque creado')
-  }, [groups])
+  }, [groups, userId])
 
   // ── Rename group ───────────────────────────────────────────────────────────
   const renameGroup = useCallback(async (groupId, name) => {
@@ -92,14 +92,13 @@ export function useData() {
 
   // ── Toggle round ───────────────────────────────────────────────────────────
   const toggleRound = useCallback(async (topicId, roundIndex) => {
-    let newRounds
     setGroups(prev => prev.map(g => ({
       ...g,
       topics: g.topics.map(t => {
         if (t.id !== topicId) return t
-        newRounds = [...t.rounds]
-        newRounds[roundIndex] = !newRounds[roundIndex]
-        return { ...t, rounds: newRounds }
+        const r = [...t.rounds]
+        r[roundIndex] = !r[roundIndex]
+        return { ...t, rounds: r }
       })
     })))
 
@@ -112,14 +111,14 @@ export function useData() {
     if (error) { toast.error('Error guardando'); fetchAll() }
   }, [groups, fetchAll])
 
-  // ── Import from CSV ───────────────────────────────────────────────────────
+  // ── Import from CSV ────────────────────────────────────────────────────────
   const importData = useCallback(async (parsedGroups) => {
     const startPosition = groups.length
     for (let i = 0; i < parsedGroups.length; i++) {
       const g = parsedGroups[i]
       const { data: group, error: gErr } = await supabase
         .from('groups')
-        .insert({ name: g.name, position: startPosition + i })
+        .insert({ name: g.name, position: startPosition + i, user_id: userId })
         .select('id')
         .single()
       if (gErr) throw gErr
@@ -137,7 +136,7 @@ export function useData() {
     await fetchAll()
     const total = parsedGroups.reduce((s, g) => s + g.topics.length, 0)
     toast.success(`${total} temas importados en ${parsedGroups.length} bloques`)
-  }, [groups.length, fetchAll])
+  }, [groups.length, userId, fetchAll])
 
   // ── Save notes ─────────────────────────────────────────────────────────────
   const saveNotes = useCallback(async (topicId, notes) => {

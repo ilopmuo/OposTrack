@@ -1,4 +1,4 @@
-export default function Header({ stats }) {
+export default function Header({ stats, userEmail, onSignOut }) {
   const { pct, doneRounds, totalRounds, completedTopics, totalTopics } = stats
 
   return (
@@ -22,11 +22,19 @@ export default function Header({ stats }) {
             </span>
           </div>
 
-          <div className="flex gap-2 flex-wrap justify-end">
-            <Chip><b>{doneRounds}</b> / {totalRounds} vueltas</Chip>
-            <Chip className="hidden sm:inline-flex">
-              <b>{completedTopics}</b> / {totalTopics} completos
-            </Chip>
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <Chip className="hidden sm:inline-flex"><b>{doneRounds}</b> / {totalRounds} vueltas</Chip>
+            <Chip className="hidden sm:inline-flex"><b>{completedTopics}</b> / {totalTopics} completos</Chip>
+            <button
+              onClick={onSignOut}
+              title={userEmail}
+              className="text-xs px-3 py-1 rounded-full transition-all"
+              style={{ background: 'rgba(255,255,255,0.4)', color: '#9B4569', border: '1px solid rgba(242,190,209,0.5)', fontWeight: 700 }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.7)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.4)' }}
+            >
+              Cerrar sesión
+            </button>
           </div>
         </div>
 
