@@ -19,11 +19,11 @@ function AddGroupRow({ onCreate }) {
   if (adding) {
     return (
       <div
-        className="flex items-center gap-3 px-5 py-3.5 rounded-2xl"
+        className="flex items-center gap-3 px-5 py-4 rounded-2xl"
         style={{
-          background: '#ffffff',
+          background: '#FEF4F8',
           border: '1.5px solid #F2BED1',
-          boxShadow: '0 4px 20px rgba(242,190,209,0.2)',
+          boxShadow: '0 4px 20px rgba(192,96,144,0.12)',
         }}
       >
         <input
@@ -32,20 +32,20 @@ function AddGroupRow({ onCreate }) {
           onChange={e => setValue(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') setAdding(false) }}
           placeholder="Nombre del bloque (Ej: Bloque I · Derecho Constitucional)"
-          className="flex-1 text-sm outline-none placeholder:text-[#D4B8C0]"
-          style={{ color: '#1C1C1E', background: 'transparent' }}
+          className="flex-1 text-sm outline-none"
+          style={{ color: '#2D1B24', background: 'transparent', fontFamily: 'inherit', fontWeight: 600 }}
         />
         <button
           onClick={submit}
-          className="text-xs font-medium px-4 py-1.5 rounded-xl transition-colors"
-          style={{ background: '#F2BED1', color: '#7A3456' }}
+          className="px-4 py-1.5 text-xs rounded-xl"
+          style={{ background: '#7A2848', color: '#fff', fontWeight: 700 }}
         >
           Crear
         </button>
         <button
           onClick={() => setAdding(false)}
-          className="text-xs transition-colors"
-          style={{ color: '#D4B8C0' }}
+          className="text-xs"
+          style={{ color: '#C4A4B0', fontWeight: 600 }}
         >
           Cancelar
         </button>
@@ -56,22 +56,10 @@ function AddGroupRow({ onCreate }) {
   return (
     <button
       onClick={() => setAdding(true)}
-      className="w-full flex items-center gap-2.5 px-5 py-3.5 text-sm rounded-2xl transition-all duration-150"
-      style={{
-        background: 'transparent',
-        border: '1.5px dashed rgba(242,190,209,0.5)',
-        color: '#D4B8C0',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#F2BED1'
-        e.currentTarget.style.color = '#C07098'
-        e.currentTarget.style.background = '#FFF5F8'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = 'rgba(242,190,209,0.5)'
-        e.currentTarget.style.color = '#D4B8C0'
-        e.currentTarget.style.background = 'transparent'
-      }}
+      className="w-full flex items-center gap-2.5 px-5 py-4 text-sm rounded-2xl transition-all duration-150"
+      style={{ background: 'transparent', border: '1.5px dashed rgba(242,190,209,0.6)', color: '#D4B8C0', fontWeight: 700 }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = '#F2BED1'; e.currentTarget.style.color = '#C06090'; e.currentTarget.style.background = '#FEF4F8' }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(242,190,209,0.6)'; e.currentTarget.style.color = '#D4B8C0'; e.currentTarget.style.background = 'transparent' }}
     >
       <Plus size={15} />
       Añadir bloque
@@ -96,7 +84,9 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#F9F5F6' }}>
-        <p className="text-sm animate-pulse" style={{ color: '#D4B8C0' }}>Cargando…</p>
+        <p style={{ color: '#D4B8C0', fontWeight: 700, fontSize: 14 }} className="animate-pulse">
+          Cargando…
+        </p>
       </div>
     )
   }
@@ -108,7 +98,7 @@ export default function App() {
   const isEmpty          = groups.length === 0
 
   return (
-    <div className="min-h-screen" style={{ background: '#F9F5F6' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #F8E8EE 0%, #F9F5F6 40%)' }}>
       <Header stats={stats} />
       <Toolbar
         filter={filter}
@@ -126,11 +116,11 @@ export default function App() {
 
         {isEmpty && (
           <div className="text-center py-24">
-            <p className="text-5xl mb-4">📚</p>
-            <p className="text-base font-semibold mb-1" style={{ color: '#6C4E5C' }}>
+            <p style={{ fontSize: 52, marginBottom: 12 }}>🌸</p>
+            <p style={{ fontSize: 16, fontWeight: 800, color: '#7A2848', marginBottom: 6 }}>
               Empieza creando tu primer bloque
             </p>
-            <p className="text-sm mb-8" style={{ color: '#C4A4B0' }}>
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#C4A4B0', marginBottom: 32 }}>
               Organiza tus temas en bloques y marca las vueltas de estudio
             </p>
           </div>

@@ -4,9 +4,9 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
     background: #F9F5F6;
-    color: #1C1C1E;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    color: #2D1B24;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -5,52 +5,42 @@ export default function Header({ stats }) {
     <header
       className="sticky top-0 z-50 px-6 py-4"
       style={{
-        background: 'rgba(249,245,246,0.85)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(242,190,209,0.3)',
+        background: 'rgba(253,206,223,0.75)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        borderBottom: '1px solid rgba(242,190,209,0.5)',
       }}
     >
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-3">
-          <div className="flex items-baseline gap-2">
-            <h1
-              className="text-xl font-semibold tracking-tight"
-              style={{ color: '#1C1C1E', letterSpacing: '-0.4px' }}
-            >
+          <div className="flex items-baseline gap-2.5">
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: '#7A2848', letterSpacing: '-0.5px' }}>
               OpoTracker
             </h1>
-            <span className="text-xs hidden sm:inline" style={{ color: '#AEAEB2' }}>
-              seguimiento de vueltas
+            <span className="text-xs hidden sm:inline" style={{ color: '#C07098', fontWeight: 600 }}>
+              mis vueltas
             </span>
           </div>
 
           <div className="flex gap-2 flex-wrap justify-end">
-            <Chip><b style={{ color: '#1C1C1E' }}>{doneRounds}</b> / {totalRounds} vueltas</Chip>
+            <Chip><b>{doneRounds}</b> / {totalRounds} vueltas</Chip>
             <Chip className="hidden sm:inline-flex">
-              <b style={{ color: '#1C1C1E' }}>{completedTopics}</b> / {totalTopics} completos
+              <b>{completedTopics}</b> / {totalTopics} completos
             </Chip>
           </div>
         </div>
 
-        {/* Progress bar */}
         <div className="flex items-center gap-3">
-          <div
-            className="flex-1 h-1.5 rounded-full overflow-hidden"
-            style={{ background: '#F8E8EE' }}
-          >
+          <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(242,190,209,0.4)' }}>
             <div
               className="h-full rounded-full transition-all duration-700 ease-out"
               style={{
                 width: `${pct}%`,
-                background: 'linear-gradient(90deg, #FDCEDF, #F2BED1)',
+                background: 'linear-gradient(90deg, #F2BED1, #C06090)',
               }}
             />
           </div>
-          <span
-            className="text-sm font-semibold min-w-[38px] text-right"
-            style={{ color: '#C07098' }}
-          >
+          <span style={{ fontSize: 14, fontWeight: 800, color: '#7A2848', minWidth: 38, textAlign: 'right' }}>
             {pct}%
           </span>
         </div>
@@ -64,9 +54,10 @@ function Chip({ children, className = '' }) {
     <span
       className={`text-xs px-3 py-1 rounded-full inline-flex items-center gap-1 ${className}`}
       style={{
-        background: '#F8E8EE',
-        color: '#9B6B7E',
-        border: '1px solid rgba(242,190,209,0.4)',
+        background: 'rgba(255,255,255,0.5)',
+        color: '#9B4569',
+        fontWeight: 700,
+        border: '1px solid rgba(242,190,209,0.6)',
       }}
     >
       {children}

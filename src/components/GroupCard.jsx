@@ -1,28 +1,27 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { ChevronRight, FileText, Plus, Trash2, Pencil, Check, X } from 'lucide-react'
 import { MAX_ROUNDS } from '../hooks/useData'
 
-// Row tint per completion level
 const ROW_BG = [
   'transparent',
-  'rgba(253,206,223,0.08)',
-  'rgba(253,206,223,0.16)',
-  'rgba(242,190,209,0.24)',
-  'rgba(242,190,209,0.38)',
+  'rgba(253,206,223,0.12)',
+  'rgba(253,206,223,0.22)',
+  'rgba(242,190,209,0.32)',
+  'rgba(242,190,209,0.46)',
 ]
 
 function RoundButton({ done, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-8 h-8 rounded-xl text-sm font-semibold transition-all duration-150 flex items-center justify-center"
+      className="w-8 h-8 rounded-xl text-sm flex items-center justify-center transition-all duration-150"
       style={
         done
-          ? { background: '#F2BED1', border: '1.5px solid #F2BED1', color: '#7A3456' }
-          : { background: '#ffffff', border: '1.5px solid #F8E8EE', color: 'transparent' }
+          ? { background: '#C06090', border: '1.5px solid #C06090', color: '#fff', fontWeight: 900 }
+          : { background: '#FEF0F6', border: '1.5px solid #F2BED1', color: 'transparent', fontWeight: 900 }
       }
-      onMouseEnter={e => { if (!done) { e.currentTarget.style.borderColor = '#FDCEDF'; e.currentTarget.style.background = '#FFF5F8' } }}
-      onMouseLeave={e => { if (!done) { e.currentTarget.style.borderColor = '#F8E8EE'; e.currentTarget.style.background = '#ffffff' } }}
+      onMouseEnter={e => { if (!done) { e.currentTarget.style.background = '#FDCEDF'; e.currentTarget.style.borderColor = '#C06090' } }}
+      onMouseLeave={e => { if (!done) { e.currentTarget.style.background = '#FEF0F6'; e.currentTarget.style.borderColor = '#F2BED1' } }}
     >
       ✓
     </button>
@@ -45,15 +44,17 @@ function InlineEdit({ value, onSave, onCancel, placeholder = '' }) {
         onChange={e => setVal(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') onCancel() }}
         placeholder={placeholder}
-        className="flex-1 text-sm px-2.5 py-1 rounded-lg outline-none min-w-0"
-        style={{ background: '#FFF5F8', border: '1.5px solid #F2BED1', color: '#1C1C1E' }}
+        className="flex-1 text-sm px-3 py-1 rounded-xl outline-none min-w-0"
+        style={{
+          background: '#FEF0F6',
+          border: '1.5px solid #F2BED1',
+          color: '#2D1B24',
+          fontFamily: 'inherit',
+          fontWeight: 600,
+        }}
       />
-      <button onClick={submit} className="flex-shrink-0 transition-colors" style={{ color: '#C07098' }}>
-        <Check size={14} />
-      </button>
-      <button onClick={onCancel} className="flex-shrink-0 transition-colors" style={{ color: '#D4B8C0' }}>
-        <X size={14} />
-      </button>
+      <button onClick={submit} style={{ color: '#C06090' }}><Check size={14} /></button>
+      <button onClick={onCancel} style={{ color: '#D4B8C0' }}><X size={14} /></button>
     </div>
   )
 }
@@ -64,11 +65,11 @@ export default function GroupCard({
   onRenameGroup, onDeleteGroup,
   onCreateTopic, onRenameTopic, onDeleteTopic,
 }) {
-  const [collapsed, setCollapsed]             = useState(false)
+  const [collapsed, setCollapsed]               = useState(false)
   const [editingGroupName, setEditingGroupName] = useState(false)
-  const [editingTopicId, setEditingTopicId]   = useState(null)
-  const [addingTopic, setAddingTopic]         = useState(false)
-  const [confirmDelete, setConfirmDelete]     = useState(false)
+  const [editingTopicId, setEditingTopicId]     = useState(null)
+  const [addingTopic, setAddingTopic]           = useState(false)
+  const [confirmDelete, setConfirmDelete]       = useState(false)
 
   const visibleTopics = group.topics.filter(t => {
     const done = t.rounds.filter(Boolean).length
@@ -84,23 +85,19 @@ export default function GroupCard({
     <div
       className="rounded-2xl overflow-hidden mb-3"
       style={{
-        background: '#ffffff',
-        boxShadow: '0 2px 16px rgba(242,190,209,0.14), 0 1px 4px rgba(0,0,0,0.04)',
-        border: '1px solid rgba(248,232,238,0.8)',
+        background: '#FEF4F8',
+        boxShadow: '0 4px 20px rgba(192,96,144,0.1), 0 1px 4px rgba(0,0,0,0.04)',
+        border: '1px solid rgba(242,190,209,0.6)',
       }}
     >
       {/* ── Group header ── */}
       <div
         className="flex items-center gap-2 px-4 py-3"
-        style={{ background: '#FFF5F8', borderBottom: '1px solid rgba(242,190,209,0.2)' }}
+        style={{ background: '#FDCEDF', borderBottom: '1px solid rgba(242,190,209,0.5)' }}
       >
-        <button
-          onClick={() => setCollapsed(c => !c)}
-          className="flex-shrink-0 transition-colors"
-          style={{ color: '#D4B8C0' }}
-        >
+        <button onClick={() => setCollapsed(c => !c)} style={{ color: '#C07098', flexShrink: 0 }}>
           <ChevronRight
-            size={14}
+            size={15}
             style={{ transition: 'transform 0.2s', transform: collapsed ? 'rotate(0deg)' : 'rotate(90deg)' }}
           />
         </button>
@@ -114,19 +111,19 @@ export default function GroupCard({
               onCancel={() => setEditingGroupName(false)}
             />
           ) : (
-            <span className="font-semibold text-sm" style={{ color: '#3C2030' }}>{group.name}</span>
+            <span style={{ fontWeight: 800, fontSize: 13, color: '#7A2848' }}>{group.name}</span>
           )}
         </div>
 
         {/* Mini progress */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-16 h-1 rounded-full overflow-hidden" style={{ background: '#F8E8EE' }}>
+          <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.5)' }}>
             <div
               className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${stats.pct}%`, background: 'linear-gradient(90deg, #FDCEDF, #F2BED1)' }}
+              style={{ width: `${stats.pct}%`, background: '#C06090' }}
             />
           </div>
-          <span className="text-xs font-semibold w-7 text-right" style={{ color: '#C4A4B0' }}>
+          <span style={{ fontSize: 11, fontWeight: 800, color: '#9B4569', minWidth: 28, textAlign: 'right' }}>
             {stats.pct}%
           </span>
         </div>
@@ -136,29 +133,26 @@ export default function GroupCard({
           <div className="flex items-center gap-0.5 flex-shrink-0">
             <button
               onClick={() => setEditingGroupName(true)}
-              className="p-1.5 rounded-lg transition-colors"
-              style={{ color: '#D4B8C0' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#9B6B7E'; e.currentTarget.style.background = '#F8E8EE' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#D4B8C0'; e.currentTarget.style.background = 'transparent' }}
-              title="Renombrar"
+              className="p-1.5 rounded-lg transition-all"
+              style={{ color: '#C07098' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.5)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
               <Pencil size={12} />
             </button>
-
             {confirmDelete ? (
-              <span className="flex items-center gap-1.5 text-xs ml-1" style={{ color: '#C07098' }}>
+              <span className="flex items-center gap-1.5 text-xs ml-1" style={{ color: '#7A2848', fontWeight: 700 }}>
                 ¿Eliminar?
-                <button className="font-semibold hover:underline" onClick={() => onDeleteGroup(group.id)}>Sí</button>
-                <button style={{ color: '#D4B8C0' }} className="hover:underline" onClick={() => setConfirmDelete(false)}>No</button>
+                <button className="underline" onClick={() => onDeleteGroup(group.id)}>Sí</button>
+                <button style={{ color: '#C07098' }} className="underline" onClick={() => setConfirmDelete(false)}>No</button>
               </span>
             ) : (
               <button
                 onClick={() => setConfirmDelete(true)}
-                className="p-1.5 rounded-lg transition-colors"
-                style={{ color: '#D4B8C0' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#C07098'; e.currentTarget.style.background = '#FDCEDF' }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#D4B8C0'; e.currentTarget.style.background = 'transparent' }}
-                title="Eliminar bloque"
+                className="p-1.5 rounded-lg transition-all"
+                style={{ color: '#C07098' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.5)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
               >
                 <Trash2 size={12} />
               </button>
@@ -172,16 +166,16 @@ export default function GroupCard({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr style={{ background: '#FFF9FB', borderBottom: '1px solid rgba(242,190,209,0.15)' }}>
-                <th className="text-left px-5 py-2.5 text-[10px] font-semibold uppercase tracking-widest" style={{ color: '#D4B8C0' }}>
+              <tr style={{ background: '#FEF4F8', borderBottom: '1px solid rgba(242,190,209,0.35)' }}>
+                <th className="text-left px-5 py-2.5" style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#C4A4B0' }}>
                   Tema
                 </th>
                 {Array.from({ length: MAX_ROUNDS }, (_, i) => (
-                  <th key={i} className="px-1 py-2.5 text-[10px] font-semibold uppercase tracking-widest text-center w-12" style={{ color: '#D4B8C0' }}>
+                  <th key={i} className="px-1 py-2.5 text-center w-12" style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#C4A4B0' }}>
                     V{i + 1}
                   </th>
                 ))}
-                <th className="w-10 text-center px-2 py-2.5" style={{ color: '#D4B8C0' }}>
+                <th className="w-10 text-center px-2 py-2.5" style={{ color: '#C4A4B0' }}>
                   <FileText size={11} className="inline" />
                 </th>
                 <th className="w-8" />
@@ -197,11 +191,13 @@ export default function GroupCard({
                     key={topic.id}
                     className="group/row transition-colors"
                     style={{
-                      borderBottom: '1px solid rgba(248,232,238,0.6)',
-                      background: isFocus ? 'rgba(253,206,223,0.15)' : ROW_BG[doneCount],
+                      borderBottom: '1px solid rgba(242,190,209,0.2)',
+                      background: isFocus ? 'rgba(253,206,223,0.35)' : ROW_BG[doneCount],
                     }}
+                    onMouseEnter={e => { if (!isFocus) e.currentTarget.style.background = 'rgba(253,206,223,0.18)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = isFocus ? 'rgba(253,206,223,0.35)' : ROW_BG[doneCount] }}
                   >
-                    <td className="px-5 py-2.5 text-[13px]" style={{ color: '#3C2030' }}>
+                    <td className="px-5 py-2.5" style={{ fontSize: 13, color: '#3C2030', fontWeight: 600 }}>
                       {editingTopicId === topic.id ? (
                         <InlineEdit
                           value={topic.name}
@@ -211,7 +207,7 @@ export default function GroupCard({
                         />
                       ) : (
                         <span
-                          className="cursor-default transition-colors"
+                          className="cursor-default"
                           onDoubleClick={() => setEditingTopicId(topic.id)}
                           title="Doble clic para editar"
                         >
@@ -230,14 +226,14 @@ export default function GroupCard({
                       <button
                         onClick={() => onOpenNotes(topic)}
                         title={topic.notes ? 'Ver nota' : 'Añadir nota'}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center mx-auto transition-colors"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center mx-auto transition-all"
                         style={
                           topic.notes
-                            ? { background: '#FDCEDF', border: '1px solid #F2BED1', color: '#9B4569' }
-                            : { background: 'transparent', border: '1px solid #F8E8EE', color: '#D4B8C0' }
+                            ? { background: '#F2BED1', border: '1.5px solid #C06090', color: '#7A2848' }
+                            : { background: 'transparent', border: '1.5px solid #F2BED1', color: '#D4B8C0' }
                         }
-                        onMouseEnter={e => { if (!topic.notes) { e.currentTarget.style.borderColor = '#FDCEDF'; e.currentTarget.style.color = '#C07098' } }}
-                        onMouseLeave={e => { if (!topic.notes) { e.currentTarget.style.borderColor = '#F8E8EE'; e.currentTarget.style.color = '#D4B8C0' } }}
+                        onMouseEnter={e => { if (!topic.notes) { e.currentTarget.style.background = '#FDCEDF'; e.currentTarget.style.color = '#C06090' } }}
+                        onMouseLeave={e => { if (!topic.notes) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4B8C0' } }}
                       >
                         <FileText size={12} />
                       </button>
@@ -246,11 +242,10 @@ export default function GroupCard({
                     <td className="px-1 py-2 text-center">
                       <button
                         onClick={() => onDeleteTopic(topic.id)}
-                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all duration-150 opacity-0 group-hover/row:opacity-100"
+                        className="w-6 h-6 rounded-lg flex items-center justify-center transition-all opacity-0 group-hover/row:opacity-100"
                         style={{ color: '#D4B8C0' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#C07098'; e.currentTarget.style.background = '#FDCEDF' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#C06090'; e.currentTarget.style.background = '#FDCEDF' }}
                         onMouseLeave={e => { e.currentTarget.style.color = '#D4B8C0'; e.currentTarget.style.background = 'transparent' }}
-                        title="Eliminar tema"
                       >
                         <Trash2 size={11} />
                       </button>
@@ -261,7 +256,7 @@ export default function GroupCard({
 
               {/* Add topic */}
               {filter === 'all' && (
-                <tr style={{ borderTop: '1px dashed rgba(242,190,209,0.4)' }}>
+                <tr style={{ borderTop: '1px dashed rgba(242,190,209,0.5)' }}>
                   <td colSpan={MAX_ROUNDS + 3} className="px-5 py-2.5">
                     {addingTopic ? (
                       <InlineEdit
@@ -274,8 +269,8 @@ export default function GroupCard({
                       <button
                         onClick={() => setAddingTopic(true)}
                         className="flex items-center gap-1.5 text-xs transition-colors"
-                        style={{ color: '#D4B8C0' }}
-                        onMouseEnter={e => { e.currentTarget.style.color = '#C07098' }}
+                        style={{ color: '#D4B8C0', fontWeight: 700 }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#C06090' }}
                         onMouseLeave={e => { e.currentTarget.style.color = '#D4B8C0' }}
                       >
                         <Plus size={13} />
