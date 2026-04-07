@@ -16,45 +16,100 @@ export function useData() {
       .order('position', { ascending: true })
       .order('position', { referencedTable: 'topics', ascending: true })
 
-    if (error) {
-      toast.error('Error cargando los datos')
-      console.error(error)
-      return
-    }
+    if (error) { toast.error('Error cargando los datos'); console.error(error); return }
     setGroups(data ?? [])
     setLoading(false)
   }, [])
 
   useEffect(() => { fetchAll() }, [fetchAll])
 
+  // ── Create group ───────────────────────────────────────────────────────────
+  const createGroup = useCallback(async (name) => {
+    const position = groups.length
+    const { data, error } = await supabase
+      .from('groups')
+      .insert({ name: name.trim(), position })
+      .select('*, topics(*)')
+      .single()
+
+    if (error) { toast.error('Error creando bloque'); return }
+    setGroups(prev => [...prev, data])
+    toast.success('Bloque creado')
+  }, [groups])
+
+  // ── Rename group ───────────────────────────────────────────────────────────
+  const renameGroup = useCallback(async (groupId, name) => {
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, name } : g))
+    const { error } = await supabase.from('groups').update({ name }).eq('id', groupId)
+    if (error) { toast.error('Error guardando'); fetchAll() }
+  }, [fetchAll])
+
+  // ── Delete group ───────────────────────────────────────────────────────────
+  const deleteGroup = useCallback(async (groupId) => {
+    setGroups(prev => prev.filter(g => g.id !== groupId))
+    const { error } = await supabase.from('groups').delete().eq('id', groupId)
+    if (error) { toast.error('Error eliminando bloque'); fetchAll() }
+    else toast.success('Bloque eliminado')
+  }, [fetchAll])
+
+  // ── Create topic ───────────────────────────────────────────────────────────
+  const createTopic = useCallback(async (groupId, name) => {
+    const group = groups.find(g => g.id === groupId)
+    const position = group ? group.topics.length : 0
+    const rounds = Array(MAX_ROUNDS).fill(false)
+
+    const { data, error } = await supabase
+      .from('topics')
+      .insert({ group_id: groupId, name: name.trim(), position, rounds })
+      .select()
+      .single()
+
+    if (error) { toast.error('Error creando tema'); return }
+    setGroups(prev => prev.map(g =>
+      g.id === groupId ? { ...g, topics: [...g.topics, data] } : g
+    ))
+  }, [groups])
+
+  // ── Rename topic ───────────────────────────────────────────────────────────
+  const renameTopic = useCallback(async (topicId, name) => {
+    setGroups(prev => prev.map(g => ({
+      ...g,
+      topics: g.topics.map(t => t.id === topicId ? { ...t, name } : t)
+    })))
+    const { error } = await supabase.from('topics').update({ name }).eq('id', topicId)
+    if (error) { toast.error('Error guardando'); fetchAll() }
+  }, [fetchAll])
+
+  // ── Delete topic ───────────────────────────────────────────────────────────
+  const deleteTopic = useCallback(async (topicId) => {
+    setGroups(prev => prev.map(g => ({
+      ...g,
+      topics: g.topics.filter(t => t.id !== topicId)
+    })))
+    const { error } = await supabase.from('topics').delete().eq('id', topicId)
+    if (error) { toast.error('Error eliminando'); fetchAll() }
+  }, [fetchAll])
+
   // ── Toggle round ───────────────────────────────────────────────────────────
   const toggleRound = useCallback(async (topicId, roundIndex) => {
-    // Optimistic update
+    let newRounds
     setGroups(prev => prev.map(g => ({
       ...g,
       topics: g.topics.map(t => {
         if (t.id !== topicId) return t
-        const newRounds = [...t.rounds]
+        newRounds = [...t.rounds]
         newRounds[roundIndex] = !newRounds[roundIndex]
         return { ...t, rounds: newRounds }
       })
     })))
 
-    // Find current rounds for the topic
     const topic = groups.flatMap(g => g.topics).find(t => t.id === topicId)
     if (!topic) return
-    const newRounds = [...topic.rounds]
-    newRounds[roundIndex] = !newRounds[roundIndex]
+    const updated = [...topic.rounds]
+    updated[roundIndex] = !updated[roundIndex]
 
-    const { error } = await supabase
-      .from('topics')
-      .update({ rounds: newRounds })
-      .eq('id', topicId)
-
-    if (error) {
-      toast.error('Error guardando')
-      fetchAll() // revert via re-fetch
-    }
+    const { error } = await supabase.from('topics').update({ rounds: updated }).eq('id', topicId)
+    if (error) { toast.error('Error guardando'); fetchAll() }
   }, [groups, fetchAll])
 
   // ── Save notes ─────────────────────────────────────────────────────────────
@@ -63,21 +118,12 @@ export function useData() {
       ...g,
       topics: g.topics.map(t => t.id === topicId ? { ...t, notes } : t)
     })))
-
-    const { error } = await supabase
-      .from('topics')
-      .update({ notes })
-      .eq('id', topicId)
-
-    if (error) {
-      toast.error('Error guardando nota')
-      fetchAll()
-    } else {
-      toast.success('Nota guardada')
-    }
+    const { error } = await supabase.from('topics').update({ notes }).eq('id', topicId)
+    if (error) { toast.error('Error guardando nota'); fetchAll() }
+    else toast.success('Nota guardada')
   }, [fetchAll])
 
-  // ── Computed stats ─────────────────────────────────────────────────────────
+  // ── Stats ──────────────────────────────────────────────────────────────────
   function getGlobalStats() {
     let totalRounds = 0, doneRounds = 0, totalTopics = 0
     for (const g of groups) {
@@ -107,5 +153,11 @@ export function useData() {
       .slice(0, 6)
   }
 
-  return { groups, loading, toggleRound, saveNotes, getGlobalStats, getGroupStats, getFocusSuggestions }
+  return {
+    groups, loading,
+    createGroup, renameGroup, deleteGroup,
+    createTopic, renameTopic, deleteTopic,
+    toggleRound, saveNotes,
+    getGlobalStats, getGroupStats, getFocusSuggestions,
+  }
 }
