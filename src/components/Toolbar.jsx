@@ -63,6 +63,7 @@ export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, 
       <button
         onClick={onFocusToggle}
         className="ml-auto px-3.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all duration-150"
+        title="Te muestra los temas que llevas menos vueltas para que sepas qué repasar primero"
         style={{
           fontWeight: 700,
           ...(focusMode
@@ -70,7 +71,7 @@ export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, 
             : { background: 'rgba(255,255,255,0.55)', color: '#9B4569', border: '1.5px solid rgba(242,190,209,0.6)' })
         }}
       >
-        ⚡ Focus
+        ✨ ¿Qué estudio hoy?
       </button>
     </div>
   )

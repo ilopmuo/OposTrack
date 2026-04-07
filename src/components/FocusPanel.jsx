@@ -10,9 +10,14 @@ export default function FocusPanel({ suggestions }) {
         boxShadow: '0 4px 16px rgba(242,190,209,0.3)',
       }}
     >
-      <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9B4569', marginBottom: 10 }}>
-        ⚡ Modo Focus — Estudia esto ahora
-      </p>
+      <div style={{ marginBottom: 10 }}>
+        <p style={{ fontSize: 14, fontWeight: 900, color: '#7A2848', marginBottom: 2 }}>
+          ✨ Temas prioritarios para hoy
+        </p>
+        <p style={{ fontSize: 11, fontWeight: 600, color: '#C07098' }}>
+          Los que llevas menos vueltas — empieza por estos
+        </p>
+      </div>
 
       {suggestions.length === 0 ? (
         <p style={{ fontSize: 13, fontWeight: 700, color: '#7A2848' }}>¡Todas las vueltas completadas! 🎉</p>
