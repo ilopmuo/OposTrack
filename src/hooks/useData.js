@@ -112,6 +112,33 @@ export function useData() {
     if (error) { toast.error('Error guardando'); fetchAll() }
   }, [groups, fetchAll])
 
+  // ── Import from CSV ───────────────────────────────────────────────────────
+  const importData = useCallback(async (parsedGroups) => {
+    const startPosition = groups.length
+    for (let i = 0; i < parsedGroups.length; i++) {
+      const g = parsedGroups[i]
+      const { data: group, error: gErr } = await supabase
+        .from('groups')
+        .insert({ name: g.name, position: startPosition + i })
+        .select('id')
+        .single()
+      if (gErr) throw gErr
+
+      const topicsToInsert = g.topics.map((name, j) => ({
+        group_id: group.id,
+        name,
+        position: j,
+        rounds: Array(MAX_ROUNDS).fill(false),
+        notes: '',
+      }))
+      const { error: tErr } = await supabase.from('topics').insert(topicsToInsert)
+      if (tErr) throw tErr
+    }
+    await fetchAll()
+    const total = parsedGroups.reduce((s, g) => s + g.topics.length, 0)
+    toast.success(`${total} temas importados en ${parsedGroups.length} bloques`)
+  }, [groups.length, fetchAll])
+
   // ── Save notes ─────────────────────────────────────────────────────────────
   const saveNotes = useCallback(async (topicId, notes) => {
     setGroups(prev => prev.map(g => ({
@@ -157,7 +184,7 @@ export function useData() {
     groups, loading,
     createGroup, renameGroup, deleteGroup,
     createTopic, renameTopic, deleteTopic,
-    toggleRound, saveNotes,
+    toggleRound, saveNotes, importData,
     getGlobalStats, getGroupStats, getFocusSuggestions,
   }
 }

@@ -7,6 +7,7 @@ import StatsGrid from './components/StatsGrid'
 import FocusPanel from './components/FocusPanel'
 import GroupCard from './components/GroupCard'
 import NotesModal from './components/NotesModal'
+import ImportModal from './components/ImportModal'
 
 function AddGroupRow({ onCreate }) {
   const [adding, setAdding] = useState(false)
@@ -72,7 +73,7 @@ export default function App() {
     groups, loading,
     createGroup, renameGroup, deleteGroup,
     createTopic, renameTopic, deleteTopic,
-    toggleRound, saveNotes,
+    toggleRound, saveNotes, importData,
     getGlobalStats, getGroupStats, getFocusSuggestions,
   } = useData()
 
@@ -80,6 +81,7 @@ export default function App() {
   const [groupFilter, setGroupFilter] = useState('')
   const [focusMode, setFocusMode]     = useState(false)
   const [notesTopic, setNotesTopic]   = useState(null)
+  const [showImport, setShowImport]   = useState(false)
 
   if (loading) {
     return (
@@ -108,6 +110,7 @@ export default function App() {
         groups={groups}
         focusMode={focusMode}
         onFocusToggle={() => setFocusMode(m => !m)}
+        onImport={() => setShowImport(true)}
       />
 
       <main className="max-w-5xl mx-auto px-4 py-6">
@@ -115,14 +118,23 @@ export default function App() {
         {focusMode && !isEmpty && <FocusPanel suggestions={focusSuggestions} />}
 
         {isEmpty && (
-          <div className="text-center py-24">
+          <div className="text-center py-20">
             <p style={{ fontSize: 52, marginBottom: 12 }}>🌸</p>
             <p style={{ fontSize: 16, fontWeight: 800, color: '#7A2848', marginBottom: 6 }}>
               Empieza creando tu primer bloque
             </p>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#C4A4B0', marginBottom: 32 }}>
-              Organiza tus temas en bloques y marca las vueltas de estudio
+            <p style={{ fontSize: 13, fontWeight: 600, color: '#C4A4B0', marginBottom: 28 }}>
+              Añádelos uno a uno o importa todos de golpe desde un CSV
             </p>
+            <button
+              onClick={() => setShowImport(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm transition-all"
+              style={{ background: '#7A2848', color: '#fff', fontWeight: 800 }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#9B3A5A' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#7A2848' }}
+            >
+              📥 Importar desde plantilla
+            </button>
           </div>
         )}
 
@@ -151,6 +163,13 @@ export default function App() {
         onSave={saveNotes}
         onClose={() => setNotesTopic(null)}
       />
+
+      {showImport && (
+        <ImportModal
+          onImport={importData}
+          onClose={() => setShowImport(false)}
+        />
+      )}
     </div>
   )
 }

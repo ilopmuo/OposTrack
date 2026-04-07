@@ -5,7 +5,7 @@ const FILTERS = [
   { key: 'done',    label: 'Completados' },
 ]
 
-export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, groups, focusMode, onFocusToggle }) {
+export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, groups, focusMode, onFocusToggle, onImport }) {
   return (
     <div
       className="px-6 py-3 flex items-center gap-2 flex-wrap"
@@ -49,6 +49,16 @@ export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, 
           <option key={g.id} value={g.id}>{g.name}</option>
         ))}
       </select>
+
+      <button
+        onClick={onImport}
+        className="px-3.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all duration-150"
+        style={{ fontWeight: 700, background: 'rgba(255,255,255,0.55)', color: '#9B4569', border: '1.5px solid rgba(242,190,209,0.6)' }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.85)' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.55)' }}
+      >
+        📥 Importar
+      </button>
 
       <button
         onClick={onFocusToggle}
