@@ -1,9 +1,20 @@
-function StatCard({ label, value, sub, color = 'text-slate-800' }) {
+function StatCard({ label, value, sub, valueColor = '#1C1C1E' }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className={`text-2xl font-extrabold tracking-tight ${color}`}>{value}</p>
-      <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: '#ffffff',
+        boxShadow: '0 2px 16px rgba(242,190,209,0.18), 0 1px 4px rgba(0,0,0,0.04)',
+        border: '1px solid rgba(248,232,238,0.8)',
+      }}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-widest mb-2" style={{ color: '#AEAEB2' }}>
+        {label}
+      </p>
+      <p className="text-3xl font-bold tracking-tight mb-0.5" style={{ color: valueColor }}>
+        {value}
+      </p>
+      <p className="text-xs" style={{ color: '#C4A4B0' }}>{sub}</p>
     </div>
   )
 }
@@ -13,11 +24,11 @@ export default function StatsGrid({ stats }) {
   const pending = totalTopics - completedTopics - startedTopics
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-      <StatCard label="Progreso global"    value={`${pct}%`}           sub={`${doneRounds} de ${totalRounds} vueltas`} color="text-indigo-600" />
-      <StatCard label="Temas completos"    value={completedTopics}     sub={`de ${totalTopics} totales`}               color="text-green-600" />
-      <StatCard label="En progreso"        value={startedTopics}       sub="con vueltas parciales"                     color="text-amber-600" />
-      <StatCard label="Sin empezar"        value={pending}             sub="temas pendientes"                          color="text-slate-500" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <StatCard label="Progreso"       value={`${pct}%`}       sub={`${doneRounds} de ${totalRounds} vueltas`} valueColor="#C07098" />
+      <StatCard label="Completados"    value={completedTopics} sub={`de ${totalTopics} temas`}                 valueColor="#7A6B7E" />
+      <StatCard label="En progreso"    value={startedTopics}   sub="con vueltas parciales"                     valueColor="#9B7E8A" />
+      <StatCard label="Sin empezar"    value={pending}         sub="temas pendientes"                          valueColor="#AEAEB2" />
     </div>
   )
 }

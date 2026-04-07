@@ -7,27 +7,40 @@ const FILTERS = [
 
 export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, groups, focusMode, onFocusToggle }) {
   return (
-    <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center gap-2 flex-wrap">
+    <div
+      className="px-6 py-3 flex items-center gap-2 flex-wrap"
+      style={{
+        background: 'rgba(249,245,246,0.7)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(242,190,209,0.2)',
+      }}
+    >
       {FILTERS.map(f => (
         <button
           key={f.key}
           onClick={() => onFilter(f.key)}
-          className={`px-3 py-1 rounded-md text-xs font-medium border transition-colors ${
+          className="px-3 py-1 rounded-full text-xs font-medium transition-all duration-150"
+          style={
             filter === f.key
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'border-slate-200 text-slate-500 hover:bg-slate-50'
-          }`}
+              ? { background: '#1C1C1E', color: '#ffffff', border: '1px solid #1C1C1E' }
+              : { background: '#F8E8EE', color: '#9B6B7E', border: '1px solid rgba(242,190,209,0.5)' }
+          }
         >
           {f.label}
         </button>
       ))}
 
-      <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
+      <div className="w-px h-4 mx-1 flex-shrink-0" style={{ background: 'rgba(242,190,209,0.5)' }} />
 
       <select
         value={groupFilter}
         onChange={e => onGroupFilter(e.target.value)}
-        className="text-xs border border-slate-200 rounded-md px-2 py-1 text-slate-500 bg-white outline-none focus:border-indigo-400 cursor-pointer"
+        className="text-xs rounded-full px-3 py-1 outline-none cursor-pointer transition-colors"
+        style={{
+          background: '#F8E8EE',
+          color: '#9B6B7E',
+          border: '1px solid rgba(242,190,209,0.5)',
+        }}
       >
         <option value="">Todos los bloques</option>
         {groups.map(g => (
@@ -37,11 +50,12 @@ export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, 
 
       <button
         onClick={onFocusToggle}
-        className={`ml-auto px-3 py-1 rounded-md text-xs font-semibold border transition-colors flex items-center gap-1.5 ${
+        className="ml-auto px-3 py-1 rounded-full text-xs font-semibold transition-all duration-150 flex items-center gap-1.5"
+        style={
           focusMode
-            ? 'bg-amber-500 text-white border-amber-500'
-            : 'border-amber-300 text-amber-600 bg-amber-50 hover:bg-amber-100'
-        }`}
+            ? { background: '#F2BED1', color: '#7A3456', border: '1px solid #F2BED1' }
+            : { background: '#F8E8EE', color: '#C07098', border: '1px solid rgba(242,190,209,0.5)' }
+        }
       >
         ⚡ Focus
       </button>

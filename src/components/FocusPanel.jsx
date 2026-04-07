@@ -1,30 +1,41 @@
 import { MAX_ROUNDS } from '../hooks/useData'
 
 export default function FocusPanel({ suggestions }) {
-  if (suggestions.length === 0) {
-    return (
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-sm text-green-700 font-medium">
-        ¡Todas las vueltas completadas! 🎉
-      </div>
-    )
-  }
-
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-      <p className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-3">
+    <div
+      className="rounded-2xl p-4 mb-5"
+      style={{
+        background: '#FFF5F8',
+        border: '1px solid rgba(242,190,209,0.5)',
+        boxShadow: '0 2px 12px rgba(242,190,209,0.12)',
+      }}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: '#C07098' }}>
         ⚡ Modo Focus — Estudia esto ahora
       </p>
-      <div className="flex flex-wrap gap-2">
-        {suggestions.map(({ topic, done }) => (
-          <span
-            key={topic.id}
-            className="bg-white border border-amber-200 rounded-md px-3 py-1.5 text-xs text-slate-700 flex items-center gap-1.5"
-          >
-            <span className="font-bold text-amber-600">{done}/{MAX_ROUNDS}</span>
-            <span>{topic.name.split('.')[0]?.trim()}. {topic.name.split('.').slice(1).join('.').trim().slice(0, 50)}</span>
-          </span>
-        ))}
-      </div>
+
+      {suggestions.length === 0 ? (
+        <p className="text-sm font-medium" style={{ color: '#7A6B7E' }}>
+          ¡Todas las vueltas completadas! 🎉
+        </p>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {suggestions.map(({ topic, done }) => (
+            <span
+              key={topic.id}
+              className="text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5"
+              style={{
+                background: '#ffffff',
+                border: '1px solid rgba(242,190,209,0.6)',
+                color: '#6C4E5C',
+              }}
+            >
+              <span className="font-bold" style={{ color: '#C07098' }}>{done}/{MAX_ROUNDS}</span>
+              {topic.name.split('.')[0]?.trim()}. {topic.name.split('.').slice(1).join('.').trim().slice(0, 48)}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
