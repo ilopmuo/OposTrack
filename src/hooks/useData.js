@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { supabase } from '../supabaseClient'
 
-export const MAX_ROUNDS = 4
+export const MAX_ROUNDS = 3
 
 export function useData(userId) {
   const [groups, setGroups] = useState([])

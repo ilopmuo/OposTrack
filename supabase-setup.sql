@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS topics (
   name      TEXT NOT NULL,
   position  INT  NOT NULL DEFAULT 0,
   notes     TEXT NOT NULL DEFAULT '',
-  rounds    JSONB NOT NULL DEFAULT '[false,false,false,false]',
+  rounds    JSONB NOT NULL DEFAULT '[false,false,false]',
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
