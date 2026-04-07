@@ -216,9 +216,9 @@ export default function GroupCard({
                       )}
                     </td>
 
-                    {topic.rounds.map((done, r) => (
+                    {Array.from({ length: MAX_ROUNDS }, (_, r) => (
                       <td key={r} className="px-1 py-2 text-center">
-                        <RoundButton done={done} onClick={() => onToggleRound(topic.id, r)} />
+                        <RoundButton done={topic.rounds[r] ?? false} onClick={() => onToggleRound(topic.id, r)} />
                       </td>
                     ))}
 
