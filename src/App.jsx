@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useAuth } from './hooks/useAuth'
 import { useData } from './hooks/useData'
+import { useExams } from './hooks/useExams'
 import AuthScreen from './components/AuthScreen'
 import Header from './components/Header'
 import Toolbar from './components/Toolbar'
@@ -64,12 +65,17 @@ export default function App() {
   const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()
 
   const {
+    exams, selectedExam, selectedId: examId, loading: examsLoading,
+    setSelectedId: setExamId, createExam, renameExam, deleteExam,
+  } = useExams(user?.id)
+
+  const {
     groups, loading: dataLoading,
     createGroup, renameGroup, deleteGroup,
     createTopic, renameTopic, deleteTopic,
     toggleRound, saveNotes, importData,
     getGlobalStats, getGroupStats, getFocusSuggestions,
-  } = useData(user?.id)
+  } = useData(user?.id, examId)
 
   const [tab, setTab]               = useState('tracker')
   const [filter, setFilter]         = useState('all')
@@ -131,6 +137,12 @@ export default function App() {
             focusMode={focusMode}
             onFocusToggle={() => setFocusMode(m => !m)}
             onImport={() => setShowImport(true)}
+            exams={exams}
+            selectedExam={selectedExam}
+            onSelectExam={setExamId}
+            onCreateExam={createExam}
+            onRenameExam={renameExam}
+            onDeleteExam={deleteExam}
           />
 
           <main className="max-w-5xl mx-auto px-4 py-6">

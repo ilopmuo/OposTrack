@@ -1,3 +1,5 @@
+import ExamSelector from './ExamSelector'
+
 const FILTERS = [
   { key: 'all',     label: 'Todos' },
   { key: 'pending', label: 'Pendientes' },
@@ -5,7 +7,7 @@ const FILTERS = [
   { key: 'done',    label: 'Completados' },
 ]
 
-export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, groups, focusMode, onFocusToggle, onImport }) {
+export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, groups, focusMode, onFocusToggle, onImport, exams, selectedExam, onSelectExam, onCreateExam, onRenameExam, onDeleteExam }) {
   return (
     <div
       className="px-6 py-3 flex items-center gap-2 flex-wrap"
@@ -49,6 +51,17 @@ export default function Toolbar({ filter, onFilter, groupFilter, onGroupFilter, 
           <option key={g.id} value={g.id}>{g.name}</option>
         ))}
       </select>
+
+      <ExamSelector
+        exams={exams}
+        selected={selectedExam}
+        onSelect={onSelectExam}
+        onCreate={onCreateExam}
+        onRename={onRenameExam}
+        onDelete={onDeleteExam}
+      />
+
+      <div className="w-px h-4 mx-1 flex-shrink-0" style={{ background: 'rgba(242,190,209,0.7)' }} />
 
       <button
         onClick={onImport}
