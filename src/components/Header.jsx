@@ -1,6 +1,7 @@
 const TABS = [
-  { key: 'tracker',  label: 'Mis vueltas' },
-  { key: 'pomodoro', label: '🍅 Pomodoro' },
+  { key: 'tracker',    label: 'Mis vueltas' },
+  { key: 'calendario', label: '📅 Calendario' },
+  { key: 'pomodoro',   label: '🍅 Pomodoro' },
 ]
 
 export default function Header({ stats, userEmail, onSignOut, tab, onTab }) {

@@ -11,6 +11,7 @@ import GroupCard from './components/GroupCard'
 import NotesModal from './components/NotesModal'
 import ImportModal from './components/ImportModal'
 import Pomodoro from './components/Pomodoro'
+import Calendario from './components/Calendario'
 
 function AddGroupRow({ onCreate }) {
   const [adding, setAdding] = useState(false)
@@ -116,7 +117,8 @@ export default function App() {
         onTab={setTab}
       />
 
-      {tab === 'pomodoro' && <Pomodoro />}
+      {tab === 'pomodoro'   && <Pomodoro />}
+      {tab === 'calendario' && <Calendario userId={user.id} />}
 
       {tab === 'tracker' && (
         <>
