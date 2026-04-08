@@ -10,24 +10,68 @@ const SESSIONS_BEFORE_LONG = 4
 
 function pad(n) { return String(n).padStart(2, '0') }
 
-function beep(type = 'end') {
+function beepEnd() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
-    const notes = type === 'end'
-      ? [{ f: 523, t: 0, d: 0.15 }, { f: 659, t: 0.18, d: 0.15 }, { f: 784, t: 0.36, d: 0.25 }]
-      : [{ f: 440, t: 0, d: 0.12 }]
-    notes.forEach(({ f, t, d }) => {
-      const osc = ctx.createOscillator()
+
+    // 3 rounds of the alarm pattern, each round = ding-ding-ding
+    const pattern = [
+      // Round 1
+      { f: 880, t: 0.00, d: 0.18 },
+      { f: 880, t: 0.22, d: 0.18 },
+      { f: 880, t: 0.44, d: 0.18 },
+      // Round 2
+      { f: 988, t: 0.80, d: 0.18 },
+      { f: 988, t: 1.02, d: 0.18 },
+      { f: 988, t: 1.24, d: 0.18 },
+      // Round 3 — higher
+      { f: 1174, t: 1.60, d: 0.25 },
+      { f: 1174, t: 1.90, d: 0.25 },
+      { f: 1174, t: 2.20, d: 0.40 },
+    ]
+
+    pattern.forEach(({ f, t, d }) => {
+      const osc  = ctx.createOscillator()
       const gain = ctx.createGain()
-      osc.connect(gain); gain.connect(ctx.destination)
-      osc.frequency.value = f
-      osc.type = 'sine'
-      gain.gain.setValueAtTime(0, ctx.currentTime + t)
-      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + t + 0.01)
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + t + d)
-      osc.start(ctx.currentTime + t)
-      osc.stop(ctx.currentTime + t + d + 0.05)
+      // Add a bit of distortion body with a square overtone
+      const osc2  = ctx.createOscillator()
+      const gain2 = ctx.createGain()
+
+      osc.connect(gain);   gain.connect(ctx.destination)
+      osc2.connect(gain2); gain2.connect(ctx.destination)
+
+      osc.frequency.value  = f
+      osc2.frequency.value = f * 2
+      osc.type  = 'sine'
+      osc2.type = 'square'
+
+      const now = ctx.currentTime
+      gain.gain.setValueAtTime(0, now + t)
+      gain.gain.linearRampToValueAtTime(0.7, now + t + 0.01)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t + d)
+
+      gain2.gain.setValueAtTime(0, now + t)
+      gain2.gain.linearRampToValueAtTime(0.12, now + t + 0.01)
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + t + d)
+
+      osc.start(now + t);  osc.stop(now + t + d + 0.05)
+      osc2.start(now + t); osc2.stop(now + t + d + 0.05)
     })
+  } catch (_) {}
+}
+
+function beepTick() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)()
+    const osc  = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain); gain.connect(ctx.destination)
+    osc.frequency.value = 440
+    osc.type = 'sine'
+    gain.gain.setValueAtTime(0, ctx.currentTime)
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1)
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.12)
   } catch (_) {}
 }
 
@@ -92,7 +136,7 @@ export default function Pomodoro() {
   }, [running]) // eslint-disable-line
 
   function handleComplete() {
-    if (settings.sound) beep('end')
+    if (settings.sound) beepEnd()
 
     const entry = { mode: mode.key, label: mode.label, completedAt: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) }
     setHistory(h => [entry, ...h].slice(0, 20))
@@ -137,7 +181,7 @@ export default function Pomodoro() {
   }
 
   function toggleRun() {
-    if (settings.sound) beep('tick')
+    if (settings.sound) beepTick()
     setRunning(r => !r)
   }
 
