@@ -10,6 +10,7 @@ import FocusPanel from './components/FocusPanel'
 import GroupCard from './components/GroupCard'
 import NotesModal from './components/NotesModal'
 import ImportModal from './components/ImportModal'
+import Pomodoro from './components/Pomodoro'
 
 function AddGroupRow({ onCreate }) {
   const [adding, setAdding] = useState(false)
@@ -69,6 +70,7 @@ export default function App() {
     getGlobalStats, getGroupStats, getFocusSuggestions,
   } = useData(user?.id)
 
+  const [tab, setTab]               = useState('tracker')
   const [filter, setFilter]         = useState('all')
   const [groupFilter, setGroupFilter] = useState('')
   const [focusMode, setFocusMode]   = useState(false)
@@ -110,67 +112,76 @@ export default function App() {
         stats={stats}
         userEmail={user.email}
         onSignOut={signOut}
-      />
-      <Toolbar
-        filter={filter}
-        onFilter={setFilter}
-        groupFilter={groupFilter}
-        onGroupFilter={setGroupFilter}
-        groups={groups}
-        focusMode={focusMode}
-        onFocusToggle={() => setFocusMode(m => !m)}
-        onImport={() => setShowImport(true)}
+        tab={tab}
+        onTab={setTab}
       />
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
-        {!isEmpty && <StatsGrid stats={stats} />}
-        {focusMode && !isEmpty && <FocusPanel suggestions={focusSuggestions} />}
+      {tab === 'pomodoro' && <Pomodoro />}
 
-        {isEmpty && (
-          <div className="text-center py-20">
-            <p style={{ fontSize: 52, marginBottom: 12 }}>🌸</p>
-            <p style={{ fontSize: 16, fontWeight: 800, color: '#7A2848', marginBottom: 6 }}>
-              Empieza creando tu primer bloque
-            </p>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#C4A4B0', marginBottom: 28 }}>
-              Añádelos uno a uno o importa todos de golpe desde un CSV
-            </p>
-            <button
-              onClick={() => setShowImport(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm transition-all"
-              style={{ background: '#7A2848', color: '#fff', fontWeight: 800 }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#9B3A5A' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#7A2848' }}
-            >
-              📥 Importar desde plantilla
-            </button>
-          </div>
-        )}
-
-        {visibleGroups.map(group => (
-          <GroupCard
-            key={group.id}
-            group={group}
-            stats={getGroupStats(group)}
+      {tab === 'tracker' && (
+        <>
+          <Toolbar
             filter={filter}
-            focusTopicIds={focusTopicIds}
-            onToggleRound={toggleRound}
-            onOpenNotes={setNotesTopic}
-            onRenameGroup={renameGroup}
-            onDeleteGroup={deleteGroup}
-            onCreateTopic={createTopic}
-            onRenameTopic={renameTopic}
-            onDeleteTopic={deleteTopic}
+            onFilter={setFilter}
+            groupFilter={groupFilter}
+            onGroupFilter={setGroupFilter}
+            groups={groups}
+            focusMode={focusMode}
+            onFocusToggle={() => setFocusMode(m => !m)}
+            onImport={() => setShowImport(true)}
           />
-        ))}
 
-        {!groupFilter && <AddGroupRow onCreate={createGroup} />}
-      </main>
+          <main className="max-w-5xl mx-auto px-4 py-6">
+            {!isEmpty && <StatsGrid stats={stats} />}
+            {focusMode && !isEmpty && <FocusPanel suggestions={focusSuggestions} />}
 
-      <NotesModal topic={notesTopic} onSave={saveNotes} onClose={() => setNotesTopic(null)} />
+            {isEmpty && (
+              <div className="text-center py-20">
+                <p style={{ fontSize: 52, marginBottom: 12 }}>🌸</p>
+                <p style={{ fontSize: 16, fontWeight: 800, color: '#7A2848', marginBottom: 6 }}>
+                  Empieza creando tu primer bloque
+                </p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: '#C4A4B0', marginBottom: 28 }}>
+                  Añádelos uno a uno o importa todos de golpe desde un CSV
+                </p>
+                <button
+                  onClick={() => setShowImport(true)}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm transition-all"
+                  style={{ background: '#7A2848', color: '#fff', fontWeight: 800 }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#9B3A5A' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#7A2848' }}
+                >
+                  📥 Importar desde plantilla
+                </button>
+              </div>
+            )}
 
-      {showImport && (
-        <ImportModal onImport={importData} onClose={() => setShowImport(false)} />
+            {visibleGroups.map(group => (
+              <GroupCard
+                key={group.id}
+                group={group}
+                stats={getGroupStats(group)}
+                filter={filter}
+                focusTopicIds={focusTopicIds}
+                onToggleRound={toggleRound}
+                onOpenNotes={setNotesTopic}
+                onRenameGroup={renameGroup}
+                onDeleteGroup={deleteGroup}
+                onCreateTopic={createTopic}
+                onRenameTopic={renameTopic}
+                onDeleteTopic={deleteTopic}
+              />
+            ))}
+
+            {!groupFilter && <AddGroupRow onCreate={createGroup} />}
+          </main>
+
+          <NotesModal topic={notesTopic} onSave={saveNotes} onClose={() => setNotesTopic(null)} />
+
+          {showImport && (
+            <ImportModal onImport={importData} onClose={() => setShowImport(false)} />
+          )}
+        </>
       )}
     </div>
   )
