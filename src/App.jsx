@@ -123,8 +123,12 @@ export default function App() {
         onTab={setTab}
       />
 
-      {tab === 'pomodoro'   && <Pomodoro />}
-      {tab === 'calendario' && <Calendario userId={user.id} />}
+      <div style={{ display: tab === 'pomodoro' ? 'block' : 'none' }}>
+        <Pomodoro />
+      </div>
+      <div style={{ display: tab === 'calendario' ? 'block' : 'none' }}>
+        <Calendario userId={user.id} />
+      </div>
 
       {tab === 'tracker' && (
         <>
